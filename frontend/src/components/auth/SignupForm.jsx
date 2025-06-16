@@ -8,10 +8,16 @@ const SignupForm = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const { username, email, phoneNumber, password, confirmPassword } = formData;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,29 +25,85 @@ const SignupForm = () => {
       ...prev,
       [name]: value,
     }));
+    setError("");
+    setSuccess("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+
+    if (!username || !email || !phoneNumber || !password || !confirmPassword) {
+      setError("All fields are required.");
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(phoneNumber)) {
+      setError("Phone number must be 10 digits.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          phoneNumber,
+          password,
+          confirmPassword,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Signup successful!");
+        setFormData({
+          username: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+          confirmPassword: "",
+        });
+      } else {
+        setError(data.message || "An error occurred. Please try again.");
+      }
+    } catch (err) {
+      setError("An error occurred while signing up. Please try again later.");
+    }
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-green-200 p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-100 to-green-200">
       {/* Logo */}
       <div className="mb-8 text-center">
         <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-800">
           Charge<span className="italic">EV⚡</span>
         </div>
-        <div className="text-xs text-gray-600 mt-1 tracking-wide">
+        <div className="mt-1 text-xs tracking-wide text-gray-600">
           POWERING YOUR JOURNEY
         </div>
       </div>
 
       {/* Signup Card */}
-      <div className="max-w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="max-w-full overflow-hidden bg-white shadow-xl rounded-2xl">
         {/* Card Header */}
-        <div className="bg-blue-900 py-1 px-6">
+        <div className="px-6 py-1 bg-blue-900">
           <h2 className="text-xl font-bold text-white">CREATE YOUR ACCOUNT</h2>
         </div>
 
@@ -71,9 +133,9 @@ const SignupForm = () => {
 
           <InputField
             label="Phone Number"
-            name="phone"
+            name="phoneNumber"
             type="tel"
-            value={formData.phone}
+            value={formData.phoneNumber}
             onChange={handleChange}
             placeholder="1234567890"
             icon="📱"
@@ -86,6 +148,7 @@ const SignupForm = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
+            autoComplete="new-password"
             placeholder="Create password"
             icon="🔒"
             required
@@ -96,10 +159,18 @@ const SignupForm = () => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
+            autoComplete="new-password"
             placeholder="Re-enter password"
             icon="🔒"
             required
           />
+
+          {error && (
+            <div className="text-sm font-medium text-red-600">{error}</div>
+          )}
+          {success && (
+            <div className="text-sm font-medium text-green-600">{success}</div>
+          )}
 
           <div className="pt-4">
             <Button
@@ -108,19 +179,20 @@ const SignupForm = () => {
               size="medium"
               fullWidth
               className="rounded-2xl"
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing Up..." : "Sign Up"}
             </Button>
           </div>
         </form>
 
         {/* Footer Links */}
-        <div className="px-6 pb-6 text-center text-sm">
+        <div className="px-6 pb-6 text-sm text-center">
           <p className="text-gray-600">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-blue-900 font-medium hover:underline"
+              className="font-medium text-blue-900 hover:underline"
             >
               Login
             </Link>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Button from "../ui/Button.jsx";
 import InputField from "../ui/InputField.jsx";
 import PasswordField from "../ui/PasswordField.jsx";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -10,17 +11,50 @@ const LoginForm = () => {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+    setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login submitted:", formData);
+
+    if(!formData.username || !formData.password) {
+      setError("Please enter both username and password.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Login successful!");
+        navigate("/dashboard");
+      } else {
+        setError(data.message || "Invalid username or password.");
+      }
+    } catch (error) {
+      setError("An error occurred while logging in. Please try again.");
+    }
+    setLoading(false);
+
   };
 
   return (
@@ -62,6 +96,7 @@ const LoginForm = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
+                autoComplete="new-password"
                 icon="🔒"
                 required
               />
@@ -80,8 +115,10 @@ const LoginForm = () => {
                 size="medium"
                 fullWidth
                 className="rounded-2xl"
+                disabled={loading}
+
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </Button>
             </div>
           </form>
