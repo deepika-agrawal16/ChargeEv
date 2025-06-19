@@ -1,13 +1,12 @@
-// controllers/stationController.js
-
 import Station from "../models/station.js";
 
+// Get all stations
 export const getAllStations = async (req, res) => {
   try {
     const stations = await Station.find({});
-    res.json(stations);
+    res.status(200).json({ stations });
   } catch (err) {
-    res.status(500).json({ message: "Error fetching stations", error: err.message });
+    console.error("Error fetching stations:", err);
+    res.status(500).json({ message: "Server error while fetching stations." });
   }
 };
-

@@ -13,6 +13,7 @@ import UserManagement from './components/ui/UserManagement.jsx';
 import Sidebar from './components/ui/Sidebar.jsx';
 import ChargingStation from './components/ui/ChargingStation.jsx';
 import BookingHistory from './pages/BookingHistory.jsx';
+import PaymentInfo from './pages/PaymentInfo.jsx';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/charging-station" element={<ChargingStation />} />
         <Route path="/booking-history" element={<BookingHistory />} />
+        <Route path="/payment-history" element={<PaymentInfo />} />
 
       </Routes>
     </Router>

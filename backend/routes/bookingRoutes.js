@@ -1,37 +1,34 @@
 import express from "express";
-import Booking from "../models/Booking.js";
-import Station from "../models/station.js";
 import protect from "../middlewares/authMiddlewares.js";
+import {
+  createBooking,
+  getUserBookings,
+  completeBooking
+} from "../controllers/bookingController.js";
+import Booking from "../models/Booking.js";
 
 const router = express.Router();
 
-// Book a charging station
-router.post("/", protect, async (req, res) => {
-  const { stationId } = req.body;
+// ✅ Create a booking
+router.post("/", protect, createBooking);
+
+// ✅ Get booking history with full station details
+router.get("/my-bookings", protect, getUserBookings);
+
+// ✅ Clear all bookings of user
+router.delete("/clear", protect, async (req, res) => {
   try {
-    const station = await Station.findById(stationId);
-    if (!station) return res.status(404).json({ message: "Station not found" });
-
-    const booking = new Booking({
-      user: req.user._id,
-      station: station._id
-    });
-
-    await booking.save();
-    res.status(201).json(booking);
+    await Booking.deleteMany({ user: req.user._id });
+    res.json({ message: "All bookings cleared" });
   } catch (err) {
-    res.status(500).json({ message: "Booking failed", error: err.message });
+    res.status(500).json({ message: "Error clearing history" });
   }
 });
 
-// Get user booking history
-router.get("/my-bookings", protect, async (req, res) => {
-  try {
-    const bookings = await Booking.find({ user: req.user._id }).populate("station");
-    res.json(bookings);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching bookings", error: err.message });
-  }
-});
+// ✅ Complete a booking and make station available again
+router.post("/complete/:id", protect, completeBooking);
+
+router.get("/transactions", protect, getUserTransactions);
+
 
 export default router;

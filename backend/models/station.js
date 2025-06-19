@@ -1,18 +1,26 @@
-// models/Station.js
+import { Schema, model } from 'mongoose';
 
-import mongoose from "mongoose";
+const stationSchema = new Schema(
+  {
+    stationid: { type: String },                   // optional if _id is enough
+    name: { type: String, required: true },
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    pincode: { type: String },                     // Keep as string to preserve leading zeros
+    latitude: { type: String },                    // Can change to Number if needed
+    longitude: { type: String },
+    availability: { type: Boolean, default: true }, // Better as Boolean (true = available)
+    isValidated: { type: Boolean, default: false }, // Use Boolean instead of String "yes"/"no"
+    issue: { type: Number, default: 0 },
+    pricing: { type: String },                      // Could also be Number + unit field
+    type: { type: String },                         // AC/DC etc.
+    contact: { type: String },
+    phones: { type: String },
+    notes: { type: String },
+    connectors: [{ type: String }],
+  },
+  { timestamps: true }
+);
 
-const stationSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  address: String,
-  city: String,
-  state: String,
-  pincode: String,
-  latitude: { type: Number, required: true },
-  longitude: { type: Number, required: true },
-  pricing: { type: String, default: "Free" },
-  availability: { type: Boolean, default: true },
-});
-
-const Station = mongoose.model("Station", stationSchema);
-export default Station;
+export default model('Station', stationSchema);

@@ -20,13 +20,15 @@ const ForgotPasswordForm = () => {
       });
 
       const data = await res.json();
+
       if (res.ok) {
         setMsg(data.message);
       } else {
-        setError(data.message);
+        setError(data.message || "Server error");
       }
-    } catch {
-      setError("Server error");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
     }
   };
 
@@ -47,9 +49,7 @@ const ForgotPasswordForm = () => {
               required
             />
           </div>
-          <Button fullWidth type="submit">
-            Send Reset Link
-          </Button>
+          <Button fullWidth type="submit">Send Reset Link</Button>
           {msg && <p className="text-center text-green-600">{msg}</p>}
           {error && <p className="text-center text-red-600">{error}</p>}
         </form>
