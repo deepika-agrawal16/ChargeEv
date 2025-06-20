@@ -8,6 +8,7 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [role, setRole] = useState("user");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -31,13 +32,12 @@ const LoginForm = () => {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, role }),
       });
       const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        // alert("Login successful!");
         navigate("/dashboard");
       } else {
         setError(data.message || "Invalid credentials.");
@@ -48,45 +48,88 @@ const LoginForm = () => {
     setLoading(false);
   };
 
-return (
-  <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-100 to-green-200">
-     
-    <div className="mb-8">
-      <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-800">
-        Charge<span className="italic">EV⚡</span>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-100 to-green-200">
+      <div className="mb-8">
+        <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-800">
+          Charge<span className="italic">EV⚡</span>
+        </div>
+        <div className="mt-1 text-xs tracking-wide text-gray-600 justify-content-center">
+          POWERING YOUR JOURNEY
+        </div>
       </div>
-      <div className="mt-1 text-xs tracking-wide text-gray-600 justify-content-center">
-        POWERING YOUR JOURNEY         
+
+      <div className="max-w-full overflow-hidden bg-white shadow-xl rounded-2xl">
+        <div className="flex justify-center px-6 py-1 bg-blue-900">
+          <h2 className="text-xl font-bold text-center text-white">WELCOME BACK</h2>
+        </div>
+
+        {/* Toggle between user/admin */}
+        <div className="flex justify-center gap-4 px-6 pt-4">
+          <button
+            type="button"
+            onClick={() => setRole("user")}
+            className={`px-4 py-1.5 text-sm font-semibold rounded-full ${
+              role === "user"
+                ? "bg-green-600 text-white"
+                : "bg-white border border-green-600 text-green-600"
+            }`}
+          >
+            👤 User
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole("admin")}
+            className={`px-4 py-1.5 text-sm font-semibold rounded-full ${
+              role === "admin"
+                ? "bg-blue-800 text-white"
+                : "bg-white border border-blue-800 text-blue-800"
+            }`}
+          >
+            🛠️ Admin
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <InputField
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="Enter your email"
+          />
+          <PasswordField
+            label="Password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            placeholder="Enter your password"
+          />
+          {error && <div className="text-sm font-medium text-red-600">{error}</div>}
+
+          <Button type="submit" variant="primary" fullWidth className="rounded-2xl" disabled={loading}>
+            {loading ? "Logging in..." : `Login as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
+          </Button>
+        </form>
+
+        <div className="px-6 pb-6 text-sm text-center">
+          <p className="text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-medium text-blue-900 hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-blue-900">
+        ChargeEV • Drive the Future
       </div>
     </div>
-
-    <div className="max-w-full overflow-hidden bg-white shadow-xl rounded-2xl">
-      <div className="flex justify-center px-6 py-1 bg-blue-900">
-        <h2 className="text-xl font-bold text-center text-white">WELCOME BACK</h2>
-      </div>
-
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
-        <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required placeholder="Enter your email" />
-        <PasswordField label="Password" name="password" value={formData.password} onChange={handleChange} required placeholder="Enter your password" />
-        {error && <div className="text-sm font-medium text-red-600">{error}</div>}
-
-        <Button type="submit" variant="primary" fullWidth className="rounded-2xl" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </Button>
-      </form>
-
-      <div className="px-6 pb-6 text-sm text-center">
-        <p className="text-gray-600">
-          Don't have an account?{" "}
-          <Link to="/signup" className="font-medium text-blue-900 hover:underline">Sign up</Link>
-        </p>
-      </div>
-    </div>
-    <div className="mt-8 text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-blue-900">
-      ChargeEV • Drive the Future
-    </div>
-  </div>
-);
+  );
 };
 
 export default LoginForm;

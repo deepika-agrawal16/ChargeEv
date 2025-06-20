@@ -2,7 +2,7 @@ import crypto from "crypto";
 import User from "../models/User.js";
 import sendEmail from "../utils/sendEmails.js";
 
-// ✅ Forgot Password Controller
+//  Forgot Password Controller
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -40,7 +40,7 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-// ✅ Reset Password Controller
+//  Reset Password Controller
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password, confirmPassword } = req.body;

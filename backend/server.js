@@ -13,24 +13,24 @@ connectDB(); // Connect to MongoDB
 
 const app = express();
 
-// ✅ CORS config — no credentials needed since you're fully token based
+// CORS config — no credentials needed since you're fully token based
 app.use(cors({
   origin: 'http://localhost:5173'
 }));
 
-// ✅ JSON body parsing with large payload allowed for image base64 strings
+// JSON body parsing with large payload allowed for image base64 strings
 app.use(express.json({ limit: '10mb' }));
 
-// ✅ Attach routes:
+// Attach routes:
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/stations', stationRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-// ✅ Automatically complete expired bookings every 1 minute
+// Automatically complete expired bookings every 1 minute
 setInterval(autoCompleteExpiredBookings, 60 * 1000);
 
-// ✅ Health check route
+// Health check route
 app.get('/', (req, res) => {
   res.send('🚀 ChargeEV API running successfully');
 });

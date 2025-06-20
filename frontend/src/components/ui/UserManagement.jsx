@@ -40,13 +40,13 @@ export default function UserManagement() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ image: tempImage }),
       });
 
       if (res.ok) {
-        alert("Profile image updated successfully.");
+        alert("Profile image updated");
         window.location.reload();
       } else {
         alert("Failed to update image");
@@ -66,9 +66,10 @@ export default function UserManagement() {
       <div className="flex flex-col flex-1">
         <Navbar showSearch={false} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-        <div className="flex items-center justify-center flex-1">
+        <div className="flex items-center justify-center flex-1 px-4 py-8">
           <div className="w-full max-w-md p-6 text-center bg-white shadow-lg rounded-xl">
 
+            {/* Profile Image Upload */}
             <div className="relative w-32 h-32 mx-auto mb-4 overflow-hidden border-4 border-green-500 rounded-full">
               <img
                 src={tempImage || user.profileImage || "https://via.placeholder.com/100"}
@@ -98,8 +99,14 @@ export default function UserManagement() {
               <p><strong>Username:</strong> {user.username}</p>
               <p><strong>Email:</strong> {user.email}</p>
               <p><strong>Phone Number:</strong> {user.phoneNumber}</p>
+              <p>
+                <strong>Role:</strong>{" "}
+                <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-full 
+                  ${user.role === "admin" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>
+                  {user.role}
+                </span>
+              </p>
             </div>
-
           </div>
         </div>
       </div>

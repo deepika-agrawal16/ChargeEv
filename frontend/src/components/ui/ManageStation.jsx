@@ -4,9 +4,8 @@ import MapComponent from "./MapComponent.jsx";
 import Navbar from "./Navbar.jsx";
 import Sidebar from "./Sidebar.jsx";
 
-export default function ChargingStation() {
+export default function ManageStation() {
   const [stations, setStations] = useState([]);
-  const [filteredStations, setFilteredStations] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -31,7 +30,6 @@ export default function ChargingStation() {
         );
 
         setStations(cleaned);
-        setFilteredStations(cleaned);
       } catch (err) {
         console.error("Error fetching stations:", err);
       }
@@ -70,33 +68,22 @@ export default function ChargingStation() {
     });
   }, []);
 
-  useEffect(() => {
-    let filtered = stations;
-
-    if (filter === "available") {
-      filtered = filtered.filter((s) => s.availability === 1 || s.availability === true);
-    } else if (filter === "unavailable") {
-      filtered = filtered.filter((s) => s.availability === 0 || s.availability === false);
-    }
-
-    if (userState) {
-      filtered = filtered.filter((s) =>
-        s.state?.toLowerCase().includes(userState.toLowerCase())
-      );
-    }
-
-    if (search.trim()) {
-      filtered = filtered.filter(
-        (s) =>
-          s.city?.toLowerCase().includes(search.toLowerCase()) ||
-          s.state?.toLowerCase().includes(search.toLowerCase()) ||
-          s.pincode?.toString().includes(search) ||
-          s.name?.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-
-    setFilteredStations(filtered);
-  }, [search, filter, stations, userState]);
+  const filteredStations = stations.filter((s) => {
+    if (filter === "available" && !(s.availability === 1 || s.availability === true)) return false;
+    if (filter === "unavailable" && !(s.availability === 0 || s.availability === false)) return false;
+    if (userState && !s.state?.toLowerCase().includes(userState.toLowerCase())) return false;
+    if (
+      search.trim() &&
+      !(
+        s.city?.toLowerCase().includes(search.toLowerCase()) ||
+        s.state?.toLowerCase().includes(search.toLowerCase()) ||
+        s.pincode?.toString().includes(search) ||
+        s.name?.toLowerCase().includes(search.toLowerCase())
+      )
+    )
+      return false;
+    return true;
+  });
 
   return (
     <div className="flex min-h-screen bg-green-50">
@@ -117,6 +104,12 @@ export default function ChargingStation() {
               Showing EV stations in <strong>{userState}</strong>
             </p>
           )}
+          <button
+            className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+            onClick={() => (window.location.href = "/admin/add-station")}
+          >
+            ➕ Add Station
+          </button>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
@@ -145,7 +138,7 @@ export default function ChargingStation() {
                   <StationCard
                     key={station.stationid || station._id}
                     station={station}
-                    mode="user"
+                    mode="admin"
                   />
                 ))
               )}

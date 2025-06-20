@@ -3,7 +3,7 @@ import generateToken from '../utils/generateToken.js';
 import bcrypt from 'bcryptjs';
 
 export const signup = async (req, res) => {
-  const { username, email, phoneNumber, password, confirmPassword } = req.body;
+  const { username, email, phoneNumber, password, confirmPassword, role = "user" } = req.body;
 
   if (!username || !email || !phoneNumber || !password || !confirmPassword) {
     return res.status(400).json({ message: 'All fields are required' });
@@ -19,11 +19,12 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: 'Email already registered' });
     }
 
-    const user = await User.create({ username, email, phoneNumber, password });
+    const user = await User.create({ username, email, phoneNumber, password, role });
 
     res.status(201).json({
       _id: user._id,
       token: generateToken(user._id),
+      role: user.role
     });
   } catch (err) {
     console.error(err);
@@ -48,6 +49,7 @@ export const login = async (req, res) => {
     res.json({
       _id: user._id,
       token: generateToken(user._id),
+      role: user.role
     });
   } catch (err) {
     console.error(err);

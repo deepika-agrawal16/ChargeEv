@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   phoneNumber: { type: String, required: true, trim: true, maxlength: 15 },
   password: { type: String, required: true, minlength: 8 },
   profileImage: { type: String, default: 'https://via.placeholder.com/100' },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 }, { timestamps: true });

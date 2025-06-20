@@ -13,6 +13,7 @@ const SignupForm = () => {
     confirmPassword: "",
   });
 
+  const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -53,13 +54,12 @@ const SignupForm = () => {
       const res = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, role }),
       });
       const data = await res.json();
 
       if (res.ok) {
         localStorage.setItem("token", data.token);
-       
         navigate("/dashboard");
       } else {
         setError(data.message || "Signup failed.");
@@ -72,35 +72,58 @@ const SignupForm = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-green-100 to-green-200">
-      {/* Logo */}
-      
       <div className="mb-8 text-cente">
-      <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-800">
-        Charge<span className="italic">EV⚡</span>
+        <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-800">
+          Charge<span className="italic">EV⚡</span>
+        </div>
+        <div className="mt-1 text-xs tracking-wide text-gray-600 justify-content-center">
+          POWERING YOUR JOURNEY
+        </div>
       </div>
-      <div className="mt-1 text-xs tracking-wide text-gray-600 justify-content-center">
-        POWERING YOUR JOURNEY         
-      </div>
-    </div>
 
-      {/* Signup Card */}
       <div className="max-w-full overflow-hidden bg-white shadow-xl rounded-2xl">
         <div className="px-6 py-1 bg-blue-900">
           <h2 className="text-xl font-bold text-white">CREATE YOUR ACCOUNT</h2>
         </div>
 
+        {/* Toggle between user/admin */}
+        <div className="flex justify-center gap-4 px-6 pt-4">
+          <button
+            type="button"
+            onClick={() => setRole("user")}
+            className={`px-4 py-1.5 text-sm font-semibold rounded-full ${
+              role === "user"
+                ? "bg-green-600 text-white"
+                : "bg-white border border-green-600 text-green-600"
+            }`}
+          >
+            👤 User
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole("admin")}
+            className={`px-4 py-1.5 text-sm font-semibold rounded-full ${
+              role === "admin"
+                ? "bg-blue-800 text-white"
+                : "bg-white border border-blue-800 text-blue-800"
+            }`}
+          >
+            🛠️ Admin
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <InputField label="Username" name="username" type="text" value={formData.username} onChange={handleChange} required  placeholder="Enter your username"/>
-          <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required placeholder= "example@chargeev.com" />
+          <InputField label="Username" name="username" type="text" value={formData.username} onChange={handleChange} required placeholder="Enter your username" />
+          <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required placeholder="example@chargeev.com" />
           <InputField label="Phone Number" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} required placeholder="1234567890" />
           <PasswordField label="Password" name="password" value={formData.password} onChange={handleChange} required placeholder="Create password" />
-          <PasswordField label="Confirm Password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required  placeholder= "Re-enter password"/>
+          <PasswordField label="Confirm Password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required placeholder="Re-enter password" />
 
           {error && <div className="text-sm font-medium text-red-600">{error}</div>}
 
           <div className="pt-4">
             <Button type="submit" variant="primary" fullWidth className="rounded-2xl" disabled={loading}>
-              {loading ? "Signing Up..." : "Sign Up"}
+              {loading ? "Signing Up..." : `Sign Up as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
             </Button>
           </div>
         </form>
@@ -112,9 +135,10 @@ const SignupForm = () => {
           </p>
         </div>
       </div>
-        <div className="mt-8 text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-blue-900">
-      ChargeEV • Drive the Future
-    </div>
+
+      <div className="mt-8 text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-blue-900">
+        ChargeEV • Drive the Future
+      </div>
     </div>
   );
 };

@@ -6,24 +6,24 @@ import {
   FaTrashAlt,
   FaRupeeSign,
   FaClock,
+  FaPlug,
+  FaUser
 } from "react-icons/fa";
-import PaymentModal from "./PaymentModal";
 
-export default function BookingHistory() {
+export default function AllBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const fetchBookings = async () => {
+  const fetchAllBookings = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/bookings/my-bookings", {
+      const res = await fetch("/api/bookings/admin/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
 
       if (res.ok) {
-        setBookings(data);
+        setBookings(data.bookings); 
       } else {
         console.error("Failed fetching bookings:", data);
       }
@@ -35,48 +35,44 @@ export default function BookingHistory() {
   };
 
   useEffect(() => {
-    fetchBookings();
+    fetchAllBookings();
   }, []);
 
-  const clearHistory = async () => {
+  const cancelBooking = async (id) => {
     const token = localStorage.getItem("token");
-    const confirmed = window.confirm("Are you sure you want to delete all bookings?");
+    const confirmed = window.confirm("Are you sure you want to cancel this booking?");
     if (!confirmed) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/bookings/clear", {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`/api/bookings/admin/cancel/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      const data = await res.json();
       if (res.ok) {
-        alert("Booking history cleared.");
-        setBookings([]);
+        alert("Booking cancelled successfully.");
+        fetchAllBookings();
       } else {
-        alert("Failed to clear history");
+        alert(data.message || "Failed to cancel booking");
       }
     } catch (err) {
-      console.error("Error clearing history:", err);
+      console.error("Error cancelling booking:", err);
     }
   };
 
   return (
-    <div className="min-h-screen p-6 bg-green-50">
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-3xl font-bold text-green-700">My Booking History</h1>
-        {bookings.length > 0 && (
-          <button
-            onClick={clearHistory}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-red-600 rounded hover:bg-red-700"
-          >
-            <FaTrashAlt /> Clear All
-          </button>
-        )}
+    <div className="min-h-screen p-6 bg-gradient-to-b from-green-100 to-green-200">
+      <div className="mb-5">
+        <h1 className="text-3xl font-bold text-green-700">All Bookings (Admin View)</h1>
       </div>
 
       {loading ? (
         <p className="text-center text-gray-500">Loading...</p>
       ) : bookings.length === 0 ? (
-        <p className="text-center text-gray-600">No bookings yet.</p>
+        <p className="text-center text-gray-600">No bookings found.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {bookings.map((booking) => (
@@ -88,6 +84,10 @@ export default function BookingHistory() {
                 <FaChargingStation className="text-green-600" />
                 {booking?.station?.name || "Unnamed Station"}
               </h2>
+
+              <p className="flex items-center gap-2 mb-1 text-gray-700">
+                <FaUser className="text-green-500" /> User: {booking?.user?.name || booking?.user?.email || "Unknown"}
+              </p>
 
               <p className="flex items-center gap-2 mb-1 text-gray-700">
                 <FaMapMarkerAlt className="text-red-600" />
@@ -107,29 +107,25 @@ export default function BookingHistory() {
                 <FaRupeeSign className="text-yellow-600" /> Amount: ₹{booking.amount}
               </p>
 
+              <p className="flex items-center gap-2 mb-1 text-gray-700">
+                <FaPlug className="text-purple-500" /> Connector: {booking.connectorType}
+              </p>
+
               <p className="mt-2 text-sm font-medium text-green-600">
                 Status: {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </p>
 
-              {booking.status === "booked" && !booking.isPaid && (
+              {booking.status === "booked" && (
                 <button
-                  onClick={() => setSelectedBooking(booking)}
-                  className="px-4 py-2 mt-3 text-sm text-white bg-green-600 rounded hover:bg-green-700"
+                  onClick={() => cancelBooking(booking._id)}
+                  className="flex items-center justify-center w-full px-4 py-2 mt-3 text-sm text-white bg-red-600 rounded hover:bg-red-700"
                 >
-                  Complete & Pay
+                  <FaTrashAlt className="mr-2" /> Cancel Booking
                 </button>
               )}
             </div>
           ))}
         </div>
-      )}
-
-      {selectedBooking && (
-        <PaymentModal
-          booking={selectedBooking}
-          onClose={() => setSelectedBooking(null)}
-          onSuccess={fetchBookings}
-        />
       )}
     </div>
   );

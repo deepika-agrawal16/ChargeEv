@@ -27,7 +27,7 @@ const PaymentModal = ({ booking, onClose, onSuccess }) => {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("✅ Payment successful and booking completed");
+        alert("Payment successful and booking completed");
         onSuccess();
         onClose();
       } else {
@@ -35,7 +35,7 @@ const PaymentModal = ({ booking, onClose, onSuccess }) => {
       }
     } catch (err) {
       console.error("Payment error:", err);
-      alert("❌ Payment processing failed");
+      alert("Payment processing failed");
     }
   };
 

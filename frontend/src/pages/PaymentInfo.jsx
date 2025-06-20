@@ -23,20 +23,20 @@ export default function PaymentInfo() {
   }, []);
 
   return (
-    <div className="min-h-screen p-6 bg-blue-50">
-      <h1 className="mb-5 text-3xl font-bold text-blue-800">My Transaction History</h1>
+    <div className="min-h-screen p-6 bg-green-50">
+      <h1 className="mb-6 text-3xl font-extrabold text-center text-green-800">Transaction History</h1>
 
       {transactions.length === 0 ? (
         <p className="text-center text-gray-600">No transactions found.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {transactions.map((tx) => (
-            <div key={tx._id} className="p-4 bg-white rounded-lg shadow">
-              <h2 className="flex items-center gap-2 text-xl font-semibold text-blue-700">
-                <FaChargingStation className="text-blue-500" />
+            <div key={tx._id} className="p-5 transition bg-white border border-green-200 shadow rounded-xl hover:shadow-md">
+              <h2 className="flex items-center gap-2 mb-1 text-lg font-bold text-green-700">
+                <FaChargingStation className="text-green-600" />
                 {tx.station?.name || "Charging Station"}
               </h2>
-              <p className="flex items-center gap-2 mt-1 text-sm text-gray-700">
+              <p className="flex items-center gap-2 text-sm text-gray-700">
                 <FaMapMarkerAlt className="text-red-500" />
                 {tx.station?.address || "No address"}
               </p>
