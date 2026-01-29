@@ -18,7 +18,7 @@ export default function AdminTransactions() {
     const fetchTransactions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/bookings/admin/all-transactions", {
+        const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/admin/all-transactions", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
