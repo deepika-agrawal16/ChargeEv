@@ -44,7 +44,7 @@ export default function BookingHistory() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/bookings/clear", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/clear", {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
