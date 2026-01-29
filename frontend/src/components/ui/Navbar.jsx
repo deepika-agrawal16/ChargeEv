@@ -14,7 +14,7 @@ const Navbar = ({ showSearch = false, search = "", handleSearch = () => {}, togg
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/user/profile", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/user/profile", {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -30,7 +30,7 @@ const Navbar = ({ showSearch = false, search = "", handleSearch = () => {}, togg
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/bookings/expiring", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/expiring", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
