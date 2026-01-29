@@ -27,7 +27,7 @@ export default function AddStationForm() {
     if (!token) return alert("Please login as admin.");
 
     try {
-      const res = await fetch("/api/stations", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/stations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
