@@ -8,7 +8,7 @@ export default function PaymentInfo() {
     const fetchTransactions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/bookings/transactions", {
+        const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/transactions", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
