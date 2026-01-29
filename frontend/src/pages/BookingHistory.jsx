@@ -17,7 +17,7 @@ export default function BookingHistory() {
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/bookings/my-bookings", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/my-bookings", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
