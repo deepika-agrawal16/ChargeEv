@@ -17,7 +17,7 @@ export default function AllBookings() {
   const fetchAllBookings = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/bookings/admin/all", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/admin/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -44,7 +44,7 @@ export default function AllBookings() {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`/api/bookings/admin/cancel/${id}`, {
+      const res = await fetch(`https://chargeev-backend-g7ik.onrender.com/api/bookings/admin/cancel/${id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
