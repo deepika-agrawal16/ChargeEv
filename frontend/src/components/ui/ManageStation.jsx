@@ -15,7 +15,7 @@ export default function ManageStation() {
   useEffect(() => {
     const fetchStations = async () => {
       try {
-        const res = await fetch("/api/stations");
+        const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/stations");
         const data = await res.json();
         const fetched = data.stations || data;
 
@@ -39,7 +39,7 @@ export default function ManageStation() {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const res = await fetch("/api/bookings/expiring", {
+        const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/expiring", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
