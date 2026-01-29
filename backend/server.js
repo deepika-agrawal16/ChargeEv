@@ -15,7 +15,10 @@ const app = express();
 
 // CORS config — no credentials needed since you're fully token based
 app.use(cors({
-  origin: 'http://localhost:5173'
+     origin: [
+      "http://localhost:5173",
+      "https://chargeev.vercel.app"
+    ]
 }));
 
 // JSON body parsing with large payload allowed for image base64 strings
