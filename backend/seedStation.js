@@ -38,15 +38,18 @@ const formattedStations = stationsData
 
 const importData = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      
-    });
+    await mongoose.connect(process.env.MONGO_URI);
+
+    console.log("MongoDB Atlas connected");
+
     await Station.deleteMany();
     await Station.insertMany(formattedStations);
-    console.log('Stations Seeded Successfully!');
-    process.exit();
-  } catch (err) {
-    console.error('Error while seeding:', err);
+
+    console.log("Electric stations seeded successfully");
+
+    process.exit(0);
+  } catch (error) {
+    console.error("Seeding error:", error.message);
     process.exit(1);
   }
 };
