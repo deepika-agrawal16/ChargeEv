@@ -10,7 +10,7 @@ export default function Charts() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/bookings/user-stats", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings/user-stats", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
