@@ -11,7 +11,7 @@ export default function UserManagement() {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("/api/user/profile", {
+        const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -36,7 +36,7 @@ export default function UserManagement() {
   const handleImageSave = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/user/profile/image", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/user/profile/image", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
