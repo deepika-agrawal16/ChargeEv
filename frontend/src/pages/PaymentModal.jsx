@@ -19,7 +19,7 @@ const PaymentModal = ({ booking, onClose, onSuccess }) => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/bookings/complete/${booking._id}`, {
+      const res = await fetch(`https://chargeev-backend-g7ik.onrender.com/api/bookings/complete/${booking._id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
