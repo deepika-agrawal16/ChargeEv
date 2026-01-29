@@ -25,7 +25,7 @@ export default function StationCard({ station, mode = "user" }) {
       const token = localStorage.getItem("token");
       if (!token) return alert("Please login first.");
 
-      const res = await fetch("/api/bookings", {
+      const res = await fetch("https://chargeev-backend-g7ik.onrender.com/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export default function StationCard({ station, mode = "user" }) {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`/api/stations/${station._id}`, {
+      const res = await fetch(`https://chargeev-backend-g7ik.onrender.com/api/stations/${station._id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
